@@ -11,110 +11,88 @@ using namespace std;
 class UnisexBathroom {
 private:
     mutex mtx;
-    condition_variable cvMen, cvWomen;
+    condition_variable cv;
     int menInside = 0, womenInside = 0;
     int menWaiting = 0, womenWaiting = 0;
-    int wCount = 0, mCount = 0;
     int capacity = 3;
-    const int switchNum = 10;
-    bool menTurn = true;  // Ensures fairness by tracking whose turn it is
+    bool menTurn = true; // Tracks whose turn it is when switching
 
 public:
-    void manEnter(int id) {
+    void enterBathroom(int id, bool isMale) {
         unique_lock<mutex> lock(mtx);
-        menWaiting++;
+        
+        if (isMale) {
+            menWaiting++;
+            cout << "Person " << id << " (male) wants to enter the bathroom. #Men: " 
+                 << menInside << ". #Women: " << womenInside << ".\n";
 
-        // Wait if women are inside, bathroom is full, or it's not men's turn
-        cvMen.wait(lock, [this]() { 
-            return womenInside == 0 && menInside < capacity 
-                && menTurn && mCount < switchNum; 
-        });
+            cv.wait(lock, [this]() { return womenInside == 0 && menInside < capacity; });
 
-        menWaiting--;
-        menInside++;
-        mCount++;
-        cout << "Man " << id << " entered. (Men inside: " << menInside << ")\n";
-    }
-
-    void manExit(int id) {
-        unique_lock<mutex> lock(mtx);
-        menInside--;
-        cout << "Man " << id << " exited. (Men inside: " << menInside << ")\n";
-
-        if (menInside == 0 && (mCount >= switchNum || womenWaiting > 0)) {
-            // Force switch to women
-            mCount = 0;
-            menTurn = false;
-            cvWomen.notify_all();
+            menWaiting--;
+            menInside++;
+            cout << "Person " << id << " (male) enters the bathroom. #Men: " 
+                 << menInside << ". #Women: " << womenInside << ".\n";
         } else {
-            cvMen.notify_one();
+            womenWaiting++;
+            cout << "Person " << id << " (female) wants to enter the bathroom. #Men: " 
+                 << menInside << ". #Women: " << womenInside << ".\n";
+
+            cv.wait(lock, [this]() { return menInside == 0 && womenInside < capacity; });
+
+            womenWaiting--;
+            womenInside++;
+            cout << "Person " << id << " (female) enters the bathroom. #Men: " 
+                 << menInside << ". #Women: " << womenInside << ".\n";
         }
-    }
 
-    void womanEnter(int id) {
-        unique_lock<mutex> lock(mtx);
-        womenWaiting++;
+        lock.unlock();
+        this_thread::sleep_for(chrono::milliseconds(500));  // Simulate bathroom usage
+        lock.lock();
 
-        // Wait if men are inside, bathroom is full, or it's not women's turn
-        cvWomen.wait(lock, [this]() { 
-            return menInside == 0 && womenInside < capacity 
-                && !menTurn && wCount < switchNum; 
-        });
+        // Exiting the bathroom
+        if (isMale) {
+            menInside--;
+            cout << "Person " << id << " (male) exits the bathroom. #Men: " 
+                 << menInside << ". #Women: " << womenInside << ".\n";
 
-        womenWaiting--;
-        womenInside++;
-        wCount++;
-
-        cout << "Woman " << id << " entered. (Women inside: " << womenInside << ")\n";
-    }
-
-    void womanExit(int id) {
-        unique_lock<mutex> lock(mtx);
-        womenInside--;
-        cout << "Woman " << id << " exited. (Women inside: " << womenInside << ")\n";
-
-        if (womenInside == 0 && (wCount >= switchNum || menWaiting > 0)) {
-            // Force switch to men
-            wCount = 0;
-            menTurn = true;
-            cvMen.notify_all();
+            // Allow waiting women to enter only if no men remain
+            if (menInside == 0 && womenWaiting > 0) {
+                menTurn = false;
+                cv.notify_all();
+            } else {
+                cv.notify_one();
+            }
         } else {
-            cvWomen.notify_one();
+            womenInside--;
+            cout << "Person " << id << " (female) exits the bathroom. #Men: " 
+                 << menInside << ". #Women: " << womenInside << ".\n";
+
+            // Allow waiting men to enter only if no women remain
+            if (womenInside == 0 && menWaiting > 0) {
+                menTurn = true;
+                cv.notify_all();
+            } else {
+                cv.notify_one();
+            }
         }
     }
 };
 
-// Function to simulate bathroom usage time
-void useBathroom() {
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<int> dist(100, 2000);
-    this_thread::sleep_for(chrono::milliseconds(dist(gen)));
+// Thread function
+void personThread(UnisexBathroom &bathroom, int id) {
+    bool isMale = rand() % 2;  // Randomly assign gender
+    bathroom.enterBathroom(id, isMale);
 }
 
-// Man thread function
-void OneMan(UnisexBathroom &bathroom, int id) {
-    bathroom.manEnter(id);
-    useBathroom();
-    bathroom.manExit(id);
-}
-
-// Woman thread function
-void OneWoman(UnisexBathroom &bathroom, int id) {
-    bathroom.womanEnter(id);
-    useBathroom();
-    bathroom.womanExit(id);
-}
-
-// Main function
 int main() {
+    srand(time(0)); // Seed random number generator
+
     UnisexBathroom bathroom;
     vector<thread> people;
 
-    // Create 10 men and 10 women threads
-    for (int i = 0; i < 20; i++) {
-        people.push_back(thread(OneMan, ref(bathroom), i + 1));
-        people.push_back(thread(OneWoman, ref(bathroom), i + 1));
+    // Create 50 people (randomly assigned male/female)
+    for (int i = 0; i < 50; i++) {
+        people.emplace_back(personThread, ref(bathroom), i);
     }
 
     // Join all threads

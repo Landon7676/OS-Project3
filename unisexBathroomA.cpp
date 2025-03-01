@@ -8,8 +8,6 @@
 
 using namespace std;
 
-//Part a
-
 class UnisexBathroom {
 private:
     mutex mtx;
@@ -20,63 +18,60 @@ private:
 public:
     void manEnter(int id) {
         unique_lock<mutex> lock(mtx);
-
-        // Wait if women are in the bathroom or it's full
+        
+        // Wait if women are inside or capacity is full
         cv.wait(lock, [this]() { return womenInside == 0 && menInside < capacity; });
 
         menInside++;
-        cout << "Man " << id << " entered. (Men inside: " << menInside << ")\n";
-    }
-
-    void manExit(int id) {
-        unique_lock<mutex> lock(mtx);
+        cout << "Man " << id << " entered. (Men inside: " << menInside << ", Women inside: " << womenInside << ")\n";
+        
+        lock.unlock();
+        useBathroom();
+        
+        lock.lock();
         menInside--;
-        cout << "Man " << id << " exited. (Men inside: " << menInside << ")\n";
-
-        // Notify waiting threads
-        cv.notify_all();
+        cout << "Man " << id << " exited. (Men inside: " << menInside << ", Women inside: " << womenInside << ")\n";
+        
+        cv.notify_all(); // Notify others when a man exits
     }
 
     void womanEnter(int id) {
         unique_lock<mutex> lock(mtx);
 
-        // Wait if men are in the bathroom or it's full
+        // Wait if men are inside or capacity is full
         cv.wait(lock, [this]() { return menInside == 0 && womenInside < capacity; });
 
         womenInside++;
-        cout << "Woman " << id << " entered. (Women inside: " << womenInside << ")\n";
+        cout << "Woman " << id << " entered. (Men inside: " << menInside << ", Women inside: " << womenInside << ")\n";
+
+        lock.unlock();
+        useBathroom();
+
+        lock.lock();
+        womenInside--;
+        cout << "Woman " << id << " exited. (Men inside: " << menInside << ", Women inside: " << womenInside << ")\n";
+
+        cv.notify_all(); // Notify others when a woman exits
     }
 
-    void womanExit(int id) {
-        unique_lock<mutex> lock(mtx);
-        womenInside--;
-        cout << "Woman " << id << " exited. (Women inside: " << womenInside << ")\n";
-
-        // Notify waiting threads
-        cv.notify_all();
+private:
+    // Function to simulate bathroom usage time
+    void useBathroom() {
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<int> dist(100, 2000);
+        this_thread::sleep_for(chrono::milliseconds(dist(gen)));
     }
 };
-
-// Function to simulate bathroom usage time
-void useBathroom() {
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<int> dist(100, 2000);
-    this_thread::sleep_for(chrono::milliseconds(dist(gen)));
-}
 
 // Man thread function
 void OneMan(UnisexBathroom &bathroom, int id) {
     bathroom.manEnter(id);
-    useBathroom();
-    bathroom.manExit(id);
 }
 
 // Woman thread function
 void OneWoman(UnisexBathroom &bathroom, int id) {
     bathroom.womanEnter(id);
-    useBathroom();
-    bathroom.womanExit(id);
 }
 
 // Main function
