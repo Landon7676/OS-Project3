@@ -1,0 +1,19 @@
+#Unisex Bathroom Problem
+
+##Part a:
+
+###File: unisexBathroomA.cpp
+
+###Compilation: g++ -o unisexBathroomA unisexBathroomA.cpp -std=c++17 -pthread
+This ensures C++ 17 features are enabled
+
+###Execution: ./unisexBathroomA
+
+##Part b:
+
+###File: unisexBathroomB.cpp
+
+###Compilation: g++ -o unisexBathroomB unisexBathroomB.cpp -std=c++17 -pthread
+This ensures C++ 17 features are enabled
+
+###Execution: ./unisexBathroomB
