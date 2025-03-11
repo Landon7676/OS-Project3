@@ -15,61 +15,75 @@ private:
     int menInside = 0, womenInside = 0;
     int menWaiting = 0, womenWaiting = 0;
     int capacity = 3;
-    bool menTurn = true; // Tracks whose turn it is when switching
+    bool menTurn = true; 
+    int consecutiveCount = 0;  // Number of consecutive users of the same gender
+    const int maxConsecutiveUsers = 10; // Limit before switching genders
 
 public:
     void enterBathroom(int id, bool isMale) {
         unique_lock<mutex> lock(mtx);
-        
+
         if (isMale) {
             menWaiting++;
-            cout << "Person " << id << " (male) wants to enter the bathroom. #Men: " 
-                 << menInside << ". #Women: " << womenInside << ".\n";
+            cout << "Person " << id << " (male) wants to enter. #Men: " 
+                 << menInside << ", #Women: " << womenInside << "\n";
 
-            cv.wait(lock, [this]() { return womenInside == 0 && menInside < capacity; });
+            // Wait if the bathroom is occupied by the other gender, if at capacity, 
+            // or if men have already reached the consecutive limit
+            cv.wait(lock, [this]() { 
+                return (womenInside == 0 && menInside < capacity && (menTurn || consecutiveCount < maxConsecutiveUsers));
+            });
 
             menWaiting--;
             menInside++;
-            cout << "Person " << id << " (male) enters the bathroom. #Men: " 
-                 << menInside << ". #Women: " << womenInside << ".\n";
+            consecutiveCount++;  // Increase consecutive count
+            cout << "Person " << id << " (male) enters. #Men: " 
+                 << menInside << ", #Women: " << womenInside << "\n";
         } else {
             womenWaiting++;
-            cout << "Person " << id << " (female) wants to enter the bathroom. #Men: " 
-                 << menInside << ". #Women: " << womenInside << ".\n";
+            cout << "Person " << id << " (female) wants to enter. #Men: " 
+                 << menInside << ", #Women: " << womenInside << "\n";
 
-            cv.wait(lock, [this]() { return menInside == 0 && womenInside < capacity; });
+            // Wait if the bathroom is occupied by the other gender, at capacity, 
+            // or if women have already reached the consecutive limit
+            cv.wait(lock, [this]() { 
+                return (menInside == 0 && womenInside < capacity && (!menTurn || consecutiveCount < maxConsecutiveUsers));
+            });
 
             womenWaiting--;
             womenInside++;
-            cout << "Person " << id << " (female) enters the bathroom. #Men: " 
-                 << menInside << ". #Women: " << womenInside << ".\n";
+            consecutiveCount++;  // Increase consecutive count
+            cout << "Person " << id << " (female) enters. #Men: " 
+                 << menInside << ", #Women: " << womenInside << "\n";
         }
 
         lock.unlock();
-        this_thread::sleep_for(chrono::milliseconds(500));  // Simulate bathroom usage
+        this_thread::sleep_for(chrono::milliseconds(500));  // Simulate usage
         lock.lock();
 
         // Exiting the bathroom
         if (isMale) {
             menInside--;
-            cout << "Person " << id << " (male) exits the bathroom. #Men: " 
-                 << menInside << ". #Women: " << womenInside << ".\n";
+            cout << "Person " << id << " (male) exits. #Men: " 
+                 << menInside << ", #Women: " << womenInside << "\n";
 
-            // Allow waiting women to enter only if no men remain
-            if (menInside == 0 && womenWaiting > 0) {
+            // If men have reached the limit, switch to women
+            if (menInside == 0 && (womenWaiting > 0 || consecutiveCount >= maxConsecutiveUsers)) {
                 menTurn = false;
+                consecutiveCount = 0;  // Reset counter
                 cv.notify_all();
             } else {
                 cv.notify_one();
             }
         } else {
             womenInside--;
-            cout << "Person " << id << " (female) exits the bathroom. #Men: " 
-                 << menInside << ". #Women: " << womenInside << ".\n";
+            cout << "Person " << id << " (female) exits. #Men: " 
+                 << menInside << ", #Women: " << womenInside << "\n";
 
-            // Allow waiting men to enter only if no women remain
-            if (womenInside == 0 && menWaiting > 0) {
+            // If women have reached the limit, switch to men
+            if (womenInside == 0 && (menWaiting > 0 || consecutiveCount >= maxConsecutiveUsers)) {
                 menTurn = true;
+                consecutiveCount = 0;  // Reset counter
                 cv.notify_all();
             } else {
                 cv.notify_one();
