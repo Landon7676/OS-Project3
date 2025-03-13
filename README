@@ -9,7 +9,54 @@ This ensures C++ 17 features are enabled
 
 Execution: ./unisexBathroomA
 
-Explanation: The program begins in the main function by creating and running 20 threads (10 for men and 10 for women). Each thread runs the OneMan or OneWoman function, which in turn, calls manEnter or womenEnter. The bathroom checks if the entry conditions are satisfied before allowing a man or woman to enter. The person enters, uses the bathroom, and then exits which is simulated by useBathroom function. When the person exits, the number of peoiple inside the bathroom is updated and other waiting threads are notified thay they can now enter.
+Explanation: The program begins in the main function by creating and running 20 threads (10 for men and 10 for women).
+Each thread runs the OneMan or OneWoman function, which in turn, calls manEnter or womenEnter. 
+The bathroom checks if the entry conditions are satisfied before allowing a man or woman to enter. 
+The person enters, uses the bathroom, and then exits which is simulated by useBathroom function. 
+When the person exits, the number of peoiple inside the bathroom is updated and other waiting threads are notified thay they can now enter.
+
+Example Output: 
+
+Man 1 entered. (Men inside: 1, Women inside: 0)
+Man 3 entered. (Men inside: 2, Women inside: 0)
+Man 2 entered. (Men inside: 3, Women inside: 0)
+Man 1 exited. (Men inside: 2, Women inside: 0)
+Man 5 entered. (Men inside: 3, Women inside: 0)
+Man 3 exited. (Men inside: 2, Women inside: 0)
+Man 6 entered. (Men inside: 3, Women inside: 0)
+Man 2 exited. (Men inside: 2, Women inside: 0)
+Man 4 entered. (Men inside: 3, Women inside: 0)
+Man 5 exited. (Men inside: 2, Women inside: 0)
+Man 9 entered. (Men inside: 3, Women inside: 0)
+Man 4 exited. (Men inside: 2, Women inside: 0)
+Man 10 entered. (Men inside: 3, Women inside: 0)
+Man 10 exited. (Men inside: 2, Women inside: 0)
+Man 8 entered. (Men inside: 3, Women inside: 0)
+Man 6 exited. (Men inside: 2, Women inside: 0)
+Man 7 entered. (Men inside: 3, Women inside: 0)
+Man 9 exited. (Men inside: 2, Women inside: 0)
+Man 7 exited. (Men inside: 1, Women inside: 0)
+Man 8 exited. (Men inside: 0, Women inside: 0)
+Woman 8 entered. (Men inside: 0, Women inside: 1)
+Woman 9 entered. (Men inside: 0, Women inside: 2)
+Woman 6 entered. (Men inside: 0, Women inside: 3)
+Woman 6 exited. (Men inside: 0, Women inside: 2)
+Woman 1 entered. (Men inside: 0, Women inside: 3)
+Woman 8 exited. (Men inside: 0, Women inside: 2)
+Woman 4 entered. (Men inside: 0, Women inside: 3)
+Woman 9 exited. (Men inside: 0, Women inside: 2)
+Woman 5 entered. (Men inside: 0, Women inside: 3)
+Woman 4 exited. (Men inside: 0, Women inside: 2)
+Woman 3 entered. (Men inside: 0, Women inside: 3)
+Woman 1 exited. (Men inside: 0, Women inside: 2)
+Woman 2 entered. (Men inside: 0, Women inside: 3)
+Woman 2 exited. (Men inside: 0, Women inside: 2)
+Woman 10 entered. (Men inside: 0, Women inside: 3)
+Woman 3 exited. (Men inside: 0, Women inside: 2)
+Woman 7 entered. (Men inside: 0, Women inside: 3)
+Woman 10 exited. (Men inside: 0, Women inside: 2)
+Woman 5 exited. (Men inside: 0, Women inside: 1)
+Woman 7 exited. (Men inside: 0, Women inside: 0)
 
 Part b:
 
@@ -21,3 +68,157 @@ This ensures C++ 17 features are enabled
 Execution: ./unisexBathroomB
 
 Explanation: The program creates 50 threads, each with a random gender assigned. Each person calls the enterBathroom function, passing their ID and gender. When a person attempts to enter, they increment either menWaiting or womenWaiting. The progra, then checks the bathroom conditions to see if women or men can enter. Once the conditions are met, the person enters the bathrom and either menInside or womenInside is updated. Bathroom usage is simulated by sleeping the thread. Once a person finishes they exit the bathroom and the appropriate "Inside" variable is decremented. Once there are no people of tjhe current gener left, the program checks if the other gender can enter, allowing only 10 consecutive threads of the same gender.
+
+Example Output:
+Person 0 (female) wants to enter the bathroom. #Men: 0. #Women: 0.
+Person 0 (female) enters the bathroom. #Men: 0. #Women: 1.
+Person 4 (male) wants to enter the bathroom. #Men: 0. #Women: 1.
+Person 1 (male) wants to enter the bathroom. #Men: 0. #Women: 1.
+Person 2 (male) wants to enter the bathroom. #Men: 0. #Women: 1.
+Person 7 (female) wants to enter the bathroom. #Men: 0. #Women: 1.
+Person 7 (female) enters the bathroom. #Men: 0. #Women: 2.
+Person 5 (male) wants to enter the bathroom. #Men: 0. #Women: 2.
+Person 6 (female) wants to enter the bathroom. #Men: 0. #Women: 2.
+Person 6 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 3 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 9 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 8 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 11 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 12 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 10 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 13 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 14 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 15 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 16 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 17 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 18 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 19 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 20 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 21 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 22 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 23 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 24 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 25 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 26 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 27 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 28 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 29 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 30 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 31 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 32 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 33 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 34 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 35 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 36 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 37 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 38 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 39 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 40 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 41 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 42 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 43 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 44 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 45 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 46 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 47 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 48 (female) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 49 (male) wants to enter the bathroom. #Men: 0. #Women: 3.
+Person 0 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 7 (female) exits the bathroom. #Men: 0. #Women: 1.
+Person 6 (female) exits the bathroom. #Men: 0. #Women: 0.
+Person 1 (male) enters the bathroom. #Men: 1. #Women: 0.
+Person 2 (male) enters the bathroom. #Men: 2. #Women: 0.
+Person 9 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 2 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 5 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 1 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 8 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 9 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 11 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 5 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 12 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 8 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 11 (male) exits the bathroom. #Men: 1. #Women: 0.
+Person 12 (male) exits the bathroom. #Men: 0. #Women: 0.
+Person 16 (male) enters the bathroom. #Men: 1. #Women: 0.
+Person 14 (male) enters the bathroom. #Men: 2. #Women: 0.
+Person 21 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 21 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 14 (male) exits the bathroom. #Men: 1. #Women: 0.
+Person 16 (male) exits the bathroom. #Men: 0. #Women: 0.
+Person 24 (female) enters the bathroom. #Men: 0. #Women: 1.
+Person 25 (female) enters the bathroom. #Men: 0. #Women: 2.
+Person 27 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 25 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 24 (female) exits the bathroom. #Men: 0. #Women: 1.
+Person 27 (female) exits the bathroom. #Men: 0. #Women: 0.
+Person 30 (female) enters the bathroom. #Men: 0. #Women: 1.
+Person 35 (female) enters the bathroom. #Men: 0. #Women: 2.
+Person 15 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 35 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 30 (female) exits the bathroom. #Men: 0. #Women: 1.
+Person 15 (female) exits the bathroom. #Men: 0. #Women: 0.
+Person 34 (male) enters the bathroom. #Men: 1. #Women: 0.
+Person 39 (male) enters the bathroom. #Men: 2. #Women: 0.
+Person 47 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 39 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 34 (male) exits the bathroom. #Men: 1. #Women: 0.
+Person 47 (male) exits the bathroom. #Men: 0. #Women: 0.
+Person 40 (female) enters the bathroom. #Men: 0. #Women: 1.
+Person 48 (female) enters the bathroom. #Men: 0. #Women: 2.
+Person 10 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 40 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 13 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 48 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 18 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 10 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 19 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 13 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 20 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 19 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 17 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 18 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 20 (female) exits the bathroom. #Men: 0. #Women: 1.
+Person 17 (female) exits the bathroom. #Men: 0. #Women: 0.
+Person 32 (male) enters the bathroom. #Men: 1. #Women: 0.
+Person 42 (male) enters the bathroom. #Men: 2. #Women: 0.
+Person 44 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 32 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 42 (male) exits the bathroom. #Men: 1. #Women: 0.
+Person 44 (male) exits the bathroom. #Men: 0. #Women: 0.
+Person 43 (male) enters the bathroom. #Men: 1. #Women: 0.
+Person 46 (male) enters the bathroom. #Men: 2. #Women: 0.
+Person 4 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 46 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 43 (male) exits the bathroom. #Men: 1. #Women: 0.
+Person 4 (male) exits the bathroom. #Men: 0. #Women: 0.
+Person 36 (female) enters the bathroom. #Men: 0. #Women: 1.
+Person 41 (female) enters the bathroom. #Men: 0. #Women: 2.
+Person 45 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 41 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 45 (female) exits the bathroom. #Men: 0. #Women: 1.
+Person 36 (female) exits the bathroom. #Men: 0. #Women: 0.
+Person 31 (female) enters the bathroom. #Men: 0. #Women: 1.
+Person 33 (female) enters the bathroom. #Men: 0. #Women: 2.
+Person 38 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 31 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 33 (female) exits the bathroom. #Men: 0. #Women: 1.
+Person 38 (female) exits the bathroom. #Men: 0. #Women: 0.
+Person 28 (male) enters the bathroom. #Men: 1. #Women: 0.
+Person 22 (male) enters the bathroom. #Men: 2. #Women: 0.
+Person 3 (male) enters the bathroom. #Men: 3. #Women: 0.
+Person 22 (male) exits the bathroom. #Men: 2. #Women: 0.
+Person 28 (male) exits the bathroom. #Men: 1. #Women: 0.
+Person 3 (male) exits the bathroom. #Men: 0. #Women: 0.
+Person 26 (male) enters the bathroom. #Men: 1. #Women: 0.
+Person 49 (male) enters the bathroom. #Men: 2. #Women: 0.
+Person 49 (male) exits the bathroom. #Men: 1. #Women: 0.
+Person 26 (male) exits the bathroom. #Men: 0. #Women: 0.
+Person 23 (female) enters the bathroom. #Men: 0. #Women: 1.
+Person 29 (female) enters the bathroom. #Men: 0. #Women: 2.
+Person 37 (female) enters the bathroom. #Men: 0. #Women: 3.
+Person 23 (female) exits the bathroom. #Men: 0. #Women: 2.
+Person 37 (female) exits the bathroom. #Men: 0. #Women: 1.
+Person 29 (female) exits the bathroom. #Men: 0. #Women: 0.
+
+
