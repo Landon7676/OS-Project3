@@ -44,16 +44,21 @@ public:
             wait_queue.front().second->notify_one();
         }
     }
+
+    int getBalance() {
+        std::unique_lock<std::mutex> lock(mtx);
+        return balance;
+    }
 };
 
-void customer(BankAccount &account, int id) {
+void customer(BankAccount &account, int id, bool forceWithdraw = false, int fixedAmount = -1) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> action(0, 1); // 0 for withdraw, 1 for deposit
     std::uniform_int_distribution<int> amount(50, 300);
 
-    int transaction = amount(gen);
-    if (action(gen) == 0) {
+    int transaction = (fixedAmount > 0) ? fixedAmount : amount(gen);
+    if (forceWithdraw || action(gen) == 0) {
         std::cout << "Customer " << id << " wants to withdraw " << transaction << "." << std::endl;
         account.withdraw(transaction);
     } else {
@@ -62,18 +67,67 @@ void customer(BankAccount &account, int id) {
     }
 }
 
-int main() {
+void runTest(int testNumber) {
     BankAccount account;
     std::vector<std::thread> customers;
-    
-    for (int i = 0; i < 10; ++i) {
-        customers.emplace_back(customer, std::ref(account), i);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Small delay for better output visibility
+
+    std::cout << "\nRunning Test Case " << testNumber << "...\n" << std::endl;
+
+    switch (testNumber) {
+        case 1: // Basic Functionality
+            for (int i = 0; i < 10; ++i) {
+                customers.emplace_back(customer, std::ref(account), i, false, -1);
+            }
+            break;
+
+        case 2: // Withdraw Before Deposit
+            for (int i = 0; i < 10; ++i) {
+                customers.emplace_back(customer, std::ref(account), i, true, -1);
+            }
+            break;
+
+        case 3: // Large Deposits and Withdrawals
+            for (int i = 0; i < 5; ++i) {
+                customers.emplace_back(customer, std::ref(account), i, false, 1000);
+            }
+            for (int i = 5; i < 10; ++i) {
+                customers.emplace_back(customer, std::ref(account), i, true, 800);
+            }
+            break;
+
+        case 4: // High Contention (Simultaneous Transactions)
+            for (int i = 0; i < 20; ++i) {
+                customers.emplace_back(customer, std::ref(account), i, false, -1);
+            }
+            break;
+
+        case 5: // Continuous Deposits and Withdrawals
+            for (int i = 0; i < 10; ++i) {
+                customers.emplace_back([&account, i]() {
+                    for (int j = 0; j < 5; ++j) {
+                        customer(account, i, false, -1);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                });
+            }
+            break;
+
+        default:
+            std::cout << "Invalid test case number." << std::endl;
+            return;
     }
 
     for (auto &t : customers) {
         t.join();
     }
 
+    std::cout << "Final Balance: " << account.getBalance() << "\n" << std::endl;
+}
+
+int main() {
+    int testNumber;
+    std::cout << "Enter test case number (1-5): ";
+    std::cin >> testNumber;
+    runTest(testNumber);
     return 0;
 }
