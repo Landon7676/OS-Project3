@@ -27,19 +27,19 @@ int in = 0, out = 0; //Buffer indices
 // POSIX Semaphores
 sem_t sem_empty;
 sem_t sem_full;
-sem_t mutex;
+sem_t sem_mutex;
 
 // Producer function: Deposits values 1 to numIters into the buffer
 void Producer(int id) {
     for (int produced = 0; produced < numIters; produced++) {
         sem_wait(&sem_empty); // Wait for empty slot
-        sem_wait(&mutex);//Lock buffer access
+        sem_wait(&sem_mutex);//Lock buffer access
 
         buffers[in] = produced;//Produce item
         cout << "Produced " << id << " produced " << produced << " at index " << in << endl;
         in = (in +1) % bufferSize; //Move to next position
 
-        sem_post(&mutex);//Unlock buffer access
+        sem_post(&sem_mutex);//Unlock buffer access
         sem_post(&sem_full); // Signal that buffer is full and an item is available
 
         usleep(100000);//Add delay(100 ms)
@@ -51,14 +51,14 @@ void Consumer(int id) {
     int total = 0;
     for (int consumed = 0; consumed < numIters; consumed++) {
         sem_wait(&sem_full); // Wait for item in buffer
-        sem_wait(&mutex);//Lock buffer access
+        sem_wait(&sem_mutex);//Lock buffer access
 
         int item = buffers[out]; //Consume item
         cout << "Consumer " << id << " consumed " << item << " from index " << out << endl;
         total += item; 
         out = (out +1) % bufferSize; //Move to next position
 
-        sem_post(&mutex);//Unlock access to buffer
+        sem_post(&sem_mutex);//Unlock access to buffer
         sem_post(&sem_empty); // Signal that buffer is empty
 
         usleep(150000);//Add delay (150 ms)
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     // Initialize semaphores
     sem_init(&sem_empty, 0, bufferSize); // Start with all slots empty
     sem_init(&sem_full, 0, 0); // No filled slots initially
-    sem_init(&mutex, 0, 1); // Mutex for mutual exclusion
+    sem_init(&sem_mutex, 0, 1); // sem_Mutex for mutual exclusion
 
     vector<thread> producers, consumers;
     for (int i = 0; i < 3; i++) {
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     // Destroy semaphores
     sem_destroy(&sem_empty);
     sem_destroy(&sem_full);
-    sem_destroy(&mutex);
+    sem_destroy(&sem_mutex);
 
     return 0;
 }
