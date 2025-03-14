@@ -268,3 +268,24 @@ Consumer 0 consumed 4 from index 4
 Consumer 0 total: 10
 Consumer 2 total: 10
 Consumer 1 total: 10
+
+
+Savings Account Problem
+
+part c:
+
+Compliation: g++ -o savingsAccountC savingsAccountC.cpp -std=c++17 -pthread
+This ensures C++ 17 features are enabled
+
+Execution: ./savingsAccountC
+
+Explanation: The bankAccount class represernts a simple bank account where multiple threads can deposit and withdraw money. The deposit method locks the mutex and increases the balance while the withdraw method also locks the mutex while deducting the amount frombalance. The getBalance then returns the current balance. The customer function creates the customer threads that will either desposit or withdraw a random amount between (50-300). The runTest function hadnles a variety of test cases, creating threads for customer actions. Finally the main simply asks the user for a test case (1-5) and runs it.
+
+part d:
+
+Compliation: g++ -o savingsAccountD savingsAccountD.cpp -std=c++17 -pthread
+This ensures c++17 features are enabled
+
+Execution: ./savingsAccountD
+
+Explanation: Similary to partC, the BankAccount class contains the deposit, withdraw, and getBalance functions. The main difference is the use of a queue with stores withdrawal requests in order. The deposit function now notofies the first request in the queue if there is sufficient funds in the bank account. The withdrawal function creates a condition variable for the withdrawal and pushes the request into the wait_queue. The request will wait in the queue if it is not first or the balance is insufficient. The customer function generates a random number and randomly chooses to deposit or withdraw. Finally, the runTest function declares the test caes and the main calls upon them based on user input.
