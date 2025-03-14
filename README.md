@@ -58,7 +58,7 @@ Woman 10 exited. (Men inside: 0, Women inside: 2)
 Woman 5 exited. (Men inside: 0, Women inside: 1)
 Woman 7 exited. (Men inside: 0, Women inside: 0)
 
-## **Part b: **
+## **Part b:**
 
 File: unisexBathroomB.cpp
 
@@ -272,7 +272,7 @@ Consumer 1 total: 10
 
 # **Savings Account Problem**
 
-## **Part c: **
+## **Part c:**
 
 Compliation: g++ -o savingsAccountC savingsAccountC.cpp -std=c++17 -pthread
 This ensures C++ 17 features are enabled
@@ -281,7 +281,7 @@ Execution: ./savingsAccountC
 
 Explanation: The bankAccount class represernts a simple bank account where multiple threads can deposit and withdraw money. The deposit method locks the mutex and increases the balance while the withdraw method also locks the mutex while deducting the amount frombalance. The getBalance then returns the current balance. The customer function creates the customer threads that will either desposit or withdraw a random amount between (50-300). The runTest function hadnles a variety of test cases, creating threads for customer actions. Finally the main simply asks the user for a test case (1-5) and runs it.
 
-## **Part d: **
+## **Part d:**
 
 Compliation: g++ -o savingsAccountD savingsAccountD.cpp -std=c++17 -pthread
 This ensures c++17 features are enabled
