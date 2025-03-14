@@ -6,6 +6,7 @@
 #include <random>
 #include <chrono>
 
+// BankAccount class simulates a simple bank account with thread-safe deposits and withdrawals.
 class BankAccount {
 private:
     int balance;
@@ -15,6 +16,7 @@ private:
 public:
     BankAccount() : balance(0) {}
 
+    // Deposits a specified amount into the account
     void deposit(int amount) {
         std::unique_lock<std::mutex> lock(mtx);
         balance += amount;
@@ -22,6 +24,7 @@ public:
         cv.notify_all();
     }
 
+    // Withdraws a specified amount from the account, ensuring sufficient balance
     void withdraw(int amount) {
         std::unique_lock<std::mutex> lock(mtx);
         while (balance < amount) {
@@ -32,12 +35,14 @@ public:
         std::cout << "Withdraw: " << amount << ". New Balance: " << balance << std::endl;
     }
 
+    // Returns the current balance
     int getBalance() {
         std::unique_lock<std::mutex> lock(mtx);
         return balance;
     }
 };
 
+// Function to simulate a bank customer performing transactions
 void customer(BankAccount &account, int id, bool forceWithdraw = false, int fixedAmount = -1) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -45,6 +50,8 @@ void customer(BankAccount &account, int id, bool forceWithdraw = false, int fixe
     std::uniform_int_distribution<int> amount(50, 300);
 
     int transaction = (fixedAmount > 0) ? fixedAmount : amount(gen);
+
+    // Randomly decide between deposit and withdrawal (unless forced)
     if (forceWithdraw || action(gen) == 0) {
         std::cout << "Customer " << id << " wants to withdraw " << transaction << "." << std::endl;
         account.withdraw(transaction);
@@ -54,6 +61,7 @@ void customer(BankAccount &account, int id, bool forceWithdraw = false, int fixe
     }
 }
 
+// Function to run different test cases
 void runTest(int testNumber) {
     BankAccount account;
     std::vector<std::thread> customers;
@@ -108,6 +116,7 @@ void runTest(int testNumber) {
         t.join();
     }
 
+    // Display the final balance after all transactions
     std::cout << "Final Balance: " << account.getBalance() << "\n" << std::endl;
 }
 
